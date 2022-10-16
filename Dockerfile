@@ -1,6 +1,11 @@
-FROM pypy:3.9-slim
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
+
+FROM ubuntu:22.04 as copy
+
+ADD https://gitlab.com/allianceauth/allianceauth.git#v${AUTH_VERSION} /allianceauth
+
+FROM pypy:3.9-slim
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceauth
 ENV AUTH_GROUP=allianceauth
@@ -36,10 +41,10 @@ RUN pypy -m pip install ${AUTH_PACKAGE}
 
 # Initialize auth
 RUN allianceauth start myauth
-COPY /allianceauth/project_template/project_name/settings/local.py ${AUTH_HOME}/myauth/myauth/settings/local.py
+COPY --from=copy /allianceauth/allianceauth/project_template/project_name/settings/local.py ${AUTH_HOME}/myauth/myauth/settings/local.py
 RUN allianceauth update myauth
 RUN mkdir -p ${STATIC_BASE}/myauth/static
-COPY /docker/conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY --from=copy /allianceauth/docker/conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
     source ~/.bashrc
