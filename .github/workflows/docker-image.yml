@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: maestrozacht/allianceauth-docker-pypy
+  IMAGE_NAME: maestrozacht/authpypy
   IMAGE_TAG: ${{ github.ref_name }}
 
 jobs:
