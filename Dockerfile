@@ -1,6 +1,5 @@
 FROM ubuntu:22.04 as copy
 ARG AUTH_VERSION
-ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 
 RUN echo "${AUTH_VERSION}"
 

@@ -1,12 +1,13 @@
 name: Docker Image CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "AllianceAuth Version"
-        required: true
-        type: string
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: maestrozacht/allianceauth-docker-pypy
+  IMAGE_TAG: ${{ context.GITHUB_REF }}
 
 jobs:
   build:
@@ -16,20 +17,11 @@ jobs:
       contents: read
 
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
+      - name: test
+        run: echo "${{ env.IMAGE_TAG }}"
 
-      - name: Build Docker image
-        run: |
-          REGISTRY_PREFIX=ghcr.io/maestrozacht/authpypy
-          CURRENT_TAG=$REGISTRY_PREFIX:${{ inputs.version }}
-          MINOR_TAG=$REGISTRY_PREFIX:$(echo ${{ inputs.version }} | cut -d '.' -f 1-2)
-          MAJOR_TAG=$REGISTRY_PREFIX:$(echo ${{ inputs.version }} | cut -d '.' -f 1)
-          LATEST_TAG=$REGISTRY_PREFIX:latest
+      # - name: Check out the repo
+      #   uses: actions/checkout@v3
 
-          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          docker build . -t $CURRENT_TAG --build-arg AUTH_VERSION=${{ inputs.version }}
-          docker tag $CURRENT_TAG $MINOR_TAG
-          docker tag $CURRENT_TAG $MAJOR_TAG
-          docker tag $CURRENT_TAG $LATEST_TAG
-          docker image push --all-tags $REGISTRY_PREFIX
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
