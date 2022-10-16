@@ -19,13 +19,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build Docker image
         run: |
           REGISTRY_PREFIX=ghcr.io/maestrozacht/authpypy
@@ -34,6 +27,7 @@ jobs:
           MAJOR_TAG=$REGISTRY_PREFIX:$(echo ${{ inputs.version }} | cut -d '.' -f 1)
           LATEST_TAG=$REGISTRY_PREFIX:latest
 
+          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
           docker build . -t $CURRENT_TAG --build-arg AUTH_VERSION=${{ inputs.version }}
           docker tag $CURRENT_TAG $MINOR_TAG
           docker tag $CURRENT_TAG $MAJOR_TAG
