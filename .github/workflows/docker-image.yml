@@ -1,13 +1,17 @@
 name: Docker Image CI
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "AllianceAuth Version"
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: maestrozacht/authpypy
-  IMAGE_TAG: ${{ github.ref_name }}
+  IMAGE_TAG: ${{ inputs.version }}
 
 jobs:
   build:
@@ -46,4 +50,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-contexts: |
-            "AUTH_VERSION=${{ env.IMAGE_TAG }}"
+            "auth_version=${{ env.IMAGE_TAG }}"

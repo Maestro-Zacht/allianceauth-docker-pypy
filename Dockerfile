@@ -1,16 +1,16 @@
 FROM ubuntu:22.04 as copy
-ARG AUTH_VERSION
+ARG auth_version
 
-RUN echo "${AUTH_VERSION}"
+RUN echo "${auth_version}"
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y git
 RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
-RUN git checkout tags/v${AUTH_VERSION}
+RUN git checkout tags/v${auth_version}
 
 FROM pypy:3.9-slim
-ARG AUTH_VERSION
-ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
+ARG auth_version
+ARG AUTH_PACKAGE=allianceauth==${auth_version}
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceauth
 ENV AUTH_GROUP=allianceauth
@@ -18,7 +18,7 @@ ENV AUTH_USERGROUP=${AUTH_USER}:${AUTH_GROUP}
 ENV STATIC_BASE=/var/www
 ENV AUTH_HOME=/home/allianceauth
 
-RUN echo "${AUTH_VERSION}"
+RUN echo "${auth_version}"
 
 # Setup user and directory permissions
 SHELL ["/bin/bash", "-c"]
