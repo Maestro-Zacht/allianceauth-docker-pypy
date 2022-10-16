@@ -3,7 +3,10 @@ ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 
 FROM ubuntu:22.04 as copy
 
-ADD https://gitlab.com/allianceauth/allianceauth.git#v${AUTH_VERSION} /allianceauth
+RUN apt-get update && apt-get upgrade -y && apt-get install -y git
+RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
+WORKDIR /allianceauth
+RUN git checkout tags/v${AUTH_VERSION}
 
 FROM pypy:3.9-slim
 ENV VIRTUAL_ENV=/opt/venv
