@@ -19,30 +19,23 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
-      - name: Log in to the Container registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ghcr.io/${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}},value=${{ inputs.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
-            type=semver,pattern={{major}},value=${{ inputs.version }}
+      - name: Build Docker image
+        run: |
+          REGISTRY_PREFIX=ghcr.io/Maestro-Zacht/allianceauth-docker-pypy
+          CURRENT_TAG=$REGISTRY_PREFIX:${{ inputs.version }}
+          MINOR_TAG=$REGISTRY_PREFIX:$(echo $CURRENT_TAG | cut -d '.' -f 1-2)
+          MAJOR_TAG=$REGISTRY_PREFIX:$(echo $CURRENT_TAG | cut -d '.' -f 1)
+          LATEST_TAG=$REGISTRY_PREFIX:latest
 
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-        env:
-          AUTH_VERSION: ${{ inputs.version }}
+          docker build . -t $CURRENT_TAG --build-arg AUTH_VERSION=${{ inputs.version }}
+          docker tag $CURRENT_TAG $MINOR_TAG
+          docker tag $CURRENT_TAG $MAJOR_TAG
+          docker tag $CURRENT_TAG $LATEST_TAG
+          docker image push --all-tags ghcr.io/Maestro-Zacht/allianceauth-docker-pypy
