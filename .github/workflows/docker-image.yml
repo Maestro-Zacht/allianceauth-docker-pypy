@@ -54,5 +54,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-contexts: |
-            "auth_version='${{ env.IMAGE_TAG }}'"
+          build-args: |
+            "AUTH_VERSION=${{ env.IMAGE_TAG }}"
