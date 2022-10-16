@@ -30,8 +30,8 @@ jobs:
         run: |
           REGISTRY_PREFIX=ghcr.io/maestro-zacht/allianceauth-docker-pypy
           CURRENT_TAG=$REGISTRY_PREFIX:${{ inputs.version }}
-          MINOR_TAG=$REGISTRY_PREFIX:$(echo $CURRENT_TAG | cut -d '.' -f 1-2)
-          MAJOR_TAG=$REGISTRY_PREFIX:$(echo $CURRENT_TAG | cut -d '.' -f 1)
+          MINOR_TAG=$REGISTRY_PREFIX:$(echo ${{ inputs.version }} | cut -d '.' -f 1-2)
+          MAJOR_TAG=$REGISTRY_PREFIX:$(echo ${{ inputs.version }} | cut -d '.' -f 1)
           LATEST_TAG=$REGISTRY_PREFIX:latest
 
           docker build . -t $CURRENT_TAG --build-arg AUTH_VERSION=${{ inputs.version }}
