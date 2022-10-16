@@ -20,11 +20,11 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            name/app
+            maestro-zacht/allianceauth-docker-pypy
           tags: |
             type=semver,pattern={{version}},value=${{ inputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
             type=semver,pattern={{major}},value=${{ inputs.version }}
 
       - name: Build the Docker image
-        run: echo ${{ steps.meta.outputs.tags }}
+        run: echo "${{ steps.meta.outputs.tags }}"
