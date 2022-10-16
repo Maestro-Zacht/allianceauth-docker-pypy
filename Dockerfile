@@ -2,6 +2,8 @@ FROM ubuntu:22.04 as copy
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 
+RUN echo "${AUTH_VERSION}"
+
 RUN apt-get update && apt-get upgrade -y && apt-get install -y git
 RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
