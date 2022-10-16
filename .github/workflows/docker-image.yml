@@ -22,9 +22,9 @@ jobs:
           images: |
             name/app
           tags: |
-            type=semver,pattern={{version}},value=${{ inputs:version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ inputs:version }}
-            type=semver,pattern={{major}},value=${{ inputs:version }}
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern={{major}},value=${{ inputs.version }}
 
       - name: Build the Docker image
         run: echo ${{ steps.meta.outputs.tags }}
