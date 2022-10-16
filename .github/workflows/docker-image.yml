@@ -17,9 +17,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
@@ -48,3 +45,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-contexts: |
+            AUTH_VERSION=${{ env.IMAGE_TAG }}
