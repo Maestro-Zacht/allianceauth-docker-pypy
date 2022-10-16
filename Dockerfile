@@ -19,6 +19,8 @@ ENV AUTH_USERGROUP=${AUTH_USER}:${AUTH_GROUP}
 ENV STATIC_BASE=/var/www
 ENV AUTH_HOME=/home/allianceauth
 
+RUN echo "${AUTH_VERSION}"
+
 # Setup user and directory permissions
 SHELL ["/bin/bash", "-c"]
 RUN groupadd -g 61000 ${AUTH_GROUP}
