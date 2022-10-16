@@ -46,4 +46,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-contexts: |
-            AUTH_VERSION=${{ env.IMAGE_TAG }}
+            "AUTH_VERSION=${{ env.IMAGE_TAG }}"
