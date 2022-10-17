@@ -57,8 +57,10 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     source ~/.bashrc
 
 FROM base as test
+USER root
 RUN apt-get update && apt-get install redis-server -y
 RUN redis-server --daemonize yes
+USER ${AUTH_USER}
 RUN pypy -V
 RUN pypy -m pip install wheel tox
 COPY tox.ini .
