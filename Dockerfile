@@ -1,3 +1,4 @@
+ARG PYPY_VERSION=3.9
 FROM ubuntu:22.04 as copy
 ARG AUTH_VERSION
 
@@ -8,6 +9,7 @@ RUN git checkout tags/v${AUTH_VERSION}
 
 ARG PYPY_VERSION=3.9
 FROM pypy:${PYPY_VERSION}-slim as base
+ARG PYPY_VERSION=3.9
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 ENV VIRTUAL_ENV=/opt/venv
