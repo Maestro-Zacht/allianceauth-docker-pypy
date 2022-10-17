@@ -63,7 +63,7 @@ USER ${AUTH_USER}
 RUN pypy -V
 RUN whereis pypy
 RUN pypy -m pip install wheel tox
-COPY --from=copy /allianceauth /testing/allianceauth
+COPY --from=copy --chown=${AUTH_USERGROUP} /allianceauth /testing/allianceauth
 WORKDIR /testing/allianceauth
 COPY tox.ini .
 RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//\./''}") -vv
