@@ -55,6 +55,7 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
     source ~/.bashrc
 
+ARG PYPY_VERSION=3.9
 FROM base as test
 USER root
 RUN apt-get update && apt-get install redis-server -y
