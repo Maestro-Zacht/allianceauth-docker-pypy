@@ -1,8 +1,6 @@
 FROM ubuntu:22.04 as copy
 ARG AUTH_VERSION
 
-RUN echo "${AUTH_VERSION}"
-
 RUN apt-get update && apt-get upgrade -y && apt-get install -y git
 RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
@@ -17,8 +15,6 @@ ENV AUTH_GROUP=allianceauth
 ENV AUTH_USERGROUP=${AUTH_USER}:${AUTH_GROUP}
 ENV STATIC_BASE=/var/www
 ENV AUTH_HOME=/home/allianceauth
-
-RUN echo "${AUTH_VERSION}"
 
 # Setup user and directory permissions
 SHELL ["/bin/bash", "-c"]
