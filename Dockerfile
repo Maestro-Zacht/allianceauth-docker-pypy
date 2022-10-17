@@ -8,7 +8,7 @@ RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
 RUN git checkout tags/v${AUTH_VERSION}
 
-FROM pypy:3.9-slim
+FROM pypy:3.9-slim as base
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 ENV VIRTUAL_ENV=/opt/venv
@@ -56,5 +56,14 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
     source ~/.bashrc
 
+FROM base as test
+RUN apt-get update && apt-get install redis-server -y
+RUN redis-server --daemonize yes
+RUN pypy -V
+RUN pypy -m pip install wheel tox
+COPY tox.ini .
+RUN tox
+
+FROM base as prod
 EXPOSE 8000
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
