@@ -1,5 +1,5 @@
 ARG INTERPRETER_VERSION=3.9
-FROM ubuntu:22.04 as copy
+FROM pypy:${INTERPRETER_VERSION}-slim as copy
 ARG AUTH_VERSION
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y git
@@ -55,7 +55,7 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     source ~/.bashrc
 
 ARG INTERPRETER_VERSION=3.9
-FROM base as test
+FROM copy as test
 USER root
 RUN apt-get update && apt-get install redis-server -y
 RUN redis-server --daemonize yes
@@ -63,10 +63,8 @@ USER ${AUTH_USER}
 RUN pypy -V
 RUN whereis pypy
 RUN pypy -m pip install wheel tox
-COPY --from=copy --chown=${AUTH_USERGROUP} /allianceauth /testing/allianceauth
-WORKDIR /testing/allianceauth
 COPY tox.ini .
-RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//\./''}") -vv
+RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//[\.]/''}") -v
 
 FROM base as prod
 EXPOSE 8000
