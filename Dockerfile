@@ -61,6 +61,7 @@ RUN apt-get update && apt-get install redis-server -y
 RUN redis-server --daemonize yes
 USER ${AUTH_USER}
 RUN pypy -V
+RUN where pypy
 RUN pypy -m pip install wheel tox
 COPY tox.ini .
 RUN tox -e pypy${INTERPRETER_VERSION}
