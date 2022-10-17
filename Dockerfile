@@ -65,6 +65,7 @@ RUN pypy -m pip install wheel tox
 COPY --from=copy /allianceauth /allianceauth
 WORKDIR /allianceauth
 COPY tox.ini .
+RUN ls -la
 RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//[\.]/''}") -v
 
 FROM base as prod
