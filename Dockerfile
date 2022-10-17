@@ -6,7 +6,8 @@ RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
 RUN git checkout tags/v${AUTH_VERSION}
 
-FROM pypy:3.9-slim as base
+ARG PYPY_VERSION=3.9
+FROM pypy:${PYPY_VERSION}-slim as base
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 ENV VIRTUAL_ENV=/opt/venv
@@ -60,7 +61,7 @@ USER ${AUTH_USER}
 RUN pypy -V
 RUN pypy -m pip install wheel tox
 COPY tox.ini .
-RUN tox
+RUN tox -e pypy${PYPY_VERSION}
 
 FROM base as prod
 EXPOSE 8000
