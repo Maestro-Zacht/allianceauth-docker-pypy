@@ -44,16 +44,16 @@ jobs:
             type=semver,pattern=v{{major}}.{{minor}},value=${{ env.IMAGE_TAG }}
             type=semver,pattern=v{{major}},value=${{ env.IMAGE_TAG }}
 
-      # - name: Build Docker image tests
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     context: .
-      #     load: true
-      #     target: "test"
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     build-args: |
-      #       "AUTH_VERSION=${{ env.IMAGE_TAG }}"
+      - name: Build Docker image tests
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          target: "test"
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            "AUTH_VERSION=${{ env.IMAGE_TAG }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
