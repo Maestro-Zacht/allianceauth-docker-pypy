@@ -64,7 +64,7 @@ RUN pypy -V
 RUN whereis pypy
 RUN pypy -m pip install wheel tox
 COPY tox.ini .
-RUN tox -e pypy${INTERPRETER_VERSION}
+RUN tox -e pypy${INTERPRETER_VERSION} -v
 
 FROM base as prod
 EXPOSE 8000
