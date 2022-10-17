@@ -59,7 +59,6 @@ FROM copy as test
 USER root
 RUN apt-get update && apt-get install redis-server -y
 RUN redis-server --daemonize yes
-USER ${AUTH_USER}
 RUN pypy -V
 RUN whereis pypy
 RUN pypy -m pip install wheel tox
