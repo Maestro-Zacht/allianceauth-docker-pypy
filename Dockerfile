@@ -55,13 +55,15 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     source ~/.bashrc
 
 ARG INTERPRETER_VERSION=3.9
-FROM copy as test
+FROM base as test
 USER root
 RUN apt-get update && apt-get install redis-server -y
 RUN redis-server --daemonize yes
 RUN pypy -V
 RUN whereis pypy
 RUN pypy -m pip install wheel tox
+COPY --from=copy /allianceauth /allianceauth
+WORKDIR /allianceauth
 COPY tox.ini .
 RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//[\.]/''}") -v
 
