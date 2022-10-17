@@ -1,4 +1,4 @@
-ARG PYPY_VERSION=3.9
+ARG INTERPRETER_VERSION=3.9
 FROM ubuntu:22.04 as copy
 ARG AUTH_VERSION
 
@@ -7,9 +7,8 @@ RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
 WORKDIR /allianceauth
 RUN git checkout tags/v${AUTH_VERSION}
 
-ARG PYPY_VERSION=3.9
-FROM pypy:${PYPY_VERSION}-slim as base
-ARG PYPY_VERSION=3.9
+ARG INTERPRETER_VERSION=3.9
+FROM pypy:${INTERPRETER_VERSION}-slim as base
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 ENV VIRTUAL_ENV=/opt/venv
@@ -55,7 +54,7 @@ RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
     source ~/.bashrc
 
-ARG PYPY_VERSION=3.9
+ARG INTERPRETER_VERSION=3.9
 FROM base as test
 USER root
 RUN apt-get update && apt-get install redis-server -y
@@ -64,7 +63,7 @@ USER ${AUTH_USER}
 RUN pypy -V
 RUN pypy -m pip install wheel tox
 COPY tox.ini .
-RUN tox -e pypy${PYPY_VERSION}
+RUN tox -e pypy${INTERPRETER_VERSION}
 
 FROM base as prod
 EXPOSE 8000

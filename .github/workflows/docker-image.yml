@@ -36,7 +36,7 @@ jobs:
           target: "test"
           build-args: |
             "AUTH_VERSION=${{ env.IMAGE_TAG }}"
-            "PYPY_VERSION=${{ matrix.pypy-version }}"
+            "INTERPRETER_VERSION=${{ matrix.pypy-version }}"
 
   publish:
     name: "Publish PyPy image"
