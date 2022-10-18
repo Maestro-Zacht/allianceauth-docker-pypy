@@ -58,7 +58,9 @@ jobs:
           pypy -m pip install --upgrade tox tox-gh-actions
 
       - name: Run tox
-        run: tox -v --workdir ./allianceauth
+        run: |
+          cd allianceauth
+          tox -v -c ../
         env:
           SETTINGS_TYPE: ${{ matrix.settings }}
 
