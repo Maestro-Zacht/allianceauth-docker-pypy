@@ -1,0 +1,3 @@
+[submodule "allianceauth"]
+	path = allianceauth
+	url = https://gitlab.com/allianceauth/allianceauth.git
