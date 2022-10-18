@@ -15,28 +15,52 @@ env:
 
 jobs:
   test:
-    name: "Test PyPy image"
+    name: "Test PyPy compatibility"
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         pypy-version: ["3.8", "3.9"]
+        settings: ["all", "core"]
+
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Clone AA v${{ env.IMAGE_TAG }}
+        run: |
+          git clone https://gitlab.com/allianceauth/allianceauth.git allianceauth
+          cd allianceauth
+          git checkout tags/v${{ env.IMAGE_TAG }}
+          cd ..
+          ls -la
 
-      - name: Build Docker image tests
-        uses: docker/build-push-action@v3
+      - uses: actions/setup-python@v4
         with:
-          context: .
-          load: true
-          target: "test"
-          build-args: |
-            "AUTH_VERSION=${{ env.IMAGE_TAG }}"
-            "INTERPRETER_VERSION=${{ matrix.pypy-version }}"
+          python-version: pypy${{ matrix.pypy-version }}
+          check-latest: true
+
+      - name: Install Tox and any other packages
+        run: |
+          pypy -m pip install --upgrade pip
+          pypy -m pip install --upgrade tox tox-gh-actions
+
+      - name: Run tox
+        run: tox -v
+        env:
+          SETTINGS_TYPE: ${{ matrix.settings }}
 
   publish:
     name: "Publish PyPy image"

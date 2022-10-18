@@ -1,14 +1,5 @@
 ARG INTERPRETER_VERSION=3.9
-FROM pypy:${INTERPRETER_VERSION}-slim as copy
-ARG AUTH_VERSION
-
-RUN apt-get update && apt-get upgrade -y && apt-get install -y git
-RUN git clone https://gitlab.com/allianceauth/allianceauth.git /allianceauth
-WORKDIR /allianceauth
-RUN git checkout tags/v${AUTH_VERSION}
-
-ARG INTERPRETER_VERSION=3.9
-FROM pypy:${INTERPRETER_VERSION}-slim as base
+FROM pypy:${INTERPRETER_VERSION}-slim
 ARG AUTH_VERSION
 ARG AUTH_PACKAGE=allianceauth==${AUTH_VERSION}
 ENV VIRTUAL_ENV=/opt/venv
@@ -53,21 +44,5 @@ COPY --from=copy /allianceauth/docker/conf/supervisord.conf /etc/supervisor/conf
 RUN echo 'alias auth="pypy $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
     source ~/.bashrc
-
-ARG INTERPRETER_VERSION=3.9
-FROM base as test
-USER root
-RUN apt-get update && apt-get install redis-server -y
-RUN redis-server --daemonize yes
-RUN pypy -V
-RUN whereis pypy
-RUN pypy -m pip install wheel tox
-COPY --from=copy /allianceauth /allianceauth
-WORKDIR /allianceauth
-COPY tox.ini .
-RUN ls -la
-RUN tox -e pypy$(echo "${${INTERPRETER_VERSION}//[\.]/''}") -v
-
-FROM base as prod
 EXPOSE 8000
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
