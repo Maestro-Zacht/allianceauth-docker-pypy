@@ -44,8 +44,6 @@ jobs:
           git clone https://gitlab.com/allianceauth/allianceauth.git allianceauth
           cd allianceauth
           git checkout tags/v${{ env.IMAGE_TAG }}
-          cd ..
-          ls -la
 
       - uses: actions/setup-python@v4
         with:
@@ -58,7 +56,8 @@ jobs:
           pypy -m pip install --upgrade tox tox-gh-actions
 
       - name: Run tox
-        run: tox -v
+        run: tox -v -c ../
+        working-directory: ./allianceauth
         env:
           SETTINGS_TYPE: ${{ matrix.settings }}
 
