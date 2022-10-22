@@ -27,6 +27,8 @@ Replace the part before the version tag with
 
 The version tag is the same as AllianceAuth, so v3.3.0 of this image has v3.3.0 of AllianceAuth.
 
+For better performance in Celery, you should increase the value of the `--max-tasks-per-child` to the maximum possible. This options is necessary in order to avoid memory leaks but it kills the process, vanishing all the benefits of using PyPy. I suggest doing a few tests with your environment and increase this number paying attention at memory usage.
+
 ## Updating this image
 
 When an AllianceAuth update comes out, I'll build and publish the updated image. In order to update this image, you just have to follow the release notes of the update and change the version tag like you would do in the default image.
