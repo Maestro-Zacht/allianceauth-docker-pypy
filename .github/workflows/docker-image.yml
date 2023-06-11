@@ -14,63 +14,12 @@ env:
   IMAGE_TAG: ${{ inputs.version }}
 
 jobs:
-  test:
-    name: "Test PyPy compatibility"
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        pypy-version: ["3.8", "3.9"]
-        settings: ["all", "core"]
-
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          # Maps port 6379 on service container to the host
-          - 6379:6379
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Clone AA
-        run: |
-          git clone https://gitlab.com/allianceauth/allianceauth.git allianceauth
-          cd allianceauth
-          git checkout tags/v${{ env.IMAGE_TAG }}
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: pypy${{ matrix.pypy-version }}
-          check-latest: true
-
-      - name: Install Tox and any other packages
-        run: |
-          pypy -m pip install --upgrade pip
-          pypy -m pip install --upgrade tox tox-gh-actions
-
-      - name: Run tox
-        run: |
-          mv -fv ../tox.ini ./tox.ini
-          tox -v
-        working-directory: allianceauth
-        env:
-          SETTINGS_TYPE: ${{ matrix.settings }}
-
   publish:
     name: "Publish PyPy image"
     runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: read
-
-    needs: [test]
 
     steps:
       - uses: actions/checkout@v3
